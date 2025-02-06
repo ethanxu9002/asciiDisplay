@@ -1,12 +1,12 @@
-
+//things to do: keypress detection
 let metaList = []
 let displayList = []
 
 let everything = { //static list that defines each object that can ever exist
   '': {
     char: ".",
-    foreground: 'white',
-    background: 'black'
+    foreground: "white",
+    background: "black"
   },
   player: {
     char: "@",
@@ -16,6 +16,29 @@ let everything = { //static list that defines each object that can ever exist
       this.x += 1;
     }
   },
+  vWall: {
+    char: "|",
+    foreground: "white",
+    background: "black"
+  },
+  hWall: {
+    char: "-",
+    foreground: "white",
+    background: "black",
+  },
+  boulder: {
+    char: "0",
+    foreground: "white",
+    background: "black",
+  },
+  hole: {
+    char: "^",
+    foreground: "sienna",
+    background: "black"
+  },
+
+
+
   cat: {
     char: 'f',
     foreground: "white",
@@ -42,29 +65,47 @@ let objects = [ //live list of everything currently existing
     y:2,
   },
   {
-    type: 'cat',
-    x:4,
-    y:2,
-    id:0
-  },
-  {
-    type: 'floatingEye',
+    type: 'boulder',
     x:3,
-    y:3,
-    id:0
+    y:4
   },
   {
-    type: 'zombie',
-    x:5,
-    y:4,
-    id:0
-  }
+    type: 'hole',
+    x:4,
+    y:4
+  },
+  {
+    type: 'vWall',
+    x:6,
+    y:6
+  },
+  {
+    type: 'vWall',
+    x:6,
+    y:7
+  },
+  {
+    type: 'hWall',
+    x:6,
+    y:8
+  },
+  {
+    type: 'hWall',
+    x:7,
+    y:8
+  },
 ]
 
 let width = 10
 let height = 10
 
 let display = document.getElementById("display-El")
+
+function sync(){ //syncs object list and metalist
+  for (let object of objects){
+    metaList[object.y][object.x] = object.type
+  }
+}
 
 //processing functions
 function render() {
@@ -82,6 +123,7 @@ function render() {
     }
     tableEl.appendChild(rowEl)
   }
+  sync()
   display.innerHTML = ""
   display.appendChild(tableEl)
 }
@@ -95,9 +137,7 @@ function setup() {
       metaList.push(row)
     }
     //console.log(metaList)
-    for (let object of objects){
-      metaList[object.y][object.x] = object.type
-    }
+    sync()
     //displayList.splice(atPos, 1, "@")
 }
 
@@ -107,19 +147,26 @@ function update() {
     let obj = everything[object.type]
     obj.update?.bind(object)()
   }
+  sync()
 }
-//gameplay functions
-function move(obj, id, x, y) {
 
-}
+//gameplay functions
+
+// COME BACK TO THIS!!!
 
 document.addEventListener("kepress", function(press6){
   if (press6.key == "6"){
-
+    console.log("6")
+    player.x += 1
+    sync()
+    render()
   }
 })
 
 setup()
+render()
+//console.log(metaList[2][1])
+//console.log(metaList)
 
 let loop = () => {
   update()
@@ -127,4 +174,4 @@ let loop = () => {
   render()
 }
 
-setInterval(loop, 1000)
+//setInterval(loop, 1000)
