@@ -22,7 +22,7 @@ let everything = { //static list that defines each object that can ever exist
     background: "black"
   },
   hWall: {
-    char: "-",
+    char: "—",
     foreground: "white",
     background: "black",
   },
@@ -102,6 +102,7 @@ let height = 10
 let display = document.getElementById("display-El")
 
 function sync(){ //syncs object list and metalist
+  setup()
   for (let object of objects){
     metaList[object.y][object.x] = object.type
   }
@@ -129,16 +130,15 @@ function render() {
 }
 function setup() {
   metaList = []
-    for (let y = 0; y < height; y++) {
-      let row = []//initaliation row by row
-      for (let x = 0; x < width; x++){
-        row.push('')
-      }  
-      metaList.push(row)
-    }
-    //console.log(metaList)
-    sync()
-    //displayList.splice(atPos, 1, "@")
+  for (let y = 0; y < height; y++) {
+    let row = []//initaliation row by row
+    for (let x = 0; x < width; x++){
+      row.push('')
+    }  
+    metaList.push(row)
+  }
+  //console.log(metaList)
+  //displayList.splice(atPos, 1, "@")
 }
 
 function update() {
@@ -152,18 +152,22 @@ function update() {
 
 //gameplay functions
 
-// COME BACK TO THIS!!!
+function moveLeft() {
+  let player = objects.find(object => object.type = 'player')
+  player.x++
+}
 
-document.addEventListener("kepress", function(press6){
+document.addEventListener("keypress", function(press6){
   if (press6.key == "6"){
-    console.log("6")
-    player.x += 1
+    moveLeft()
     sync()
     render()
   }
 })
 
-setup()
+
+// SETUP
+sync()
 render()
 //console.log(metaList[2][1])
 //console.log(metaList)
