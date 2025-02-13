@@ -65,6 +65,11 @@ let objects = [ //live list of everything currently existing
     y:2,
   },
   {
+    type: 'vWall',
+    x:4,
+    y:2
+  },
+  {
     type: 'boulder',
     x:3,
     y:4
@@ -72,7 +77,7 @@ let objects = [ //live list of everything currently existing
   {
     type: 'hole',
     x:4,
-    y:4
+    y:5
   },
   {
     type: 'vWall',
@@ -153,13 +158,129 @@ function update() {
 //gameplay functions
 
 function moveLeft() {
-  let player = objects.find(object => object.type = 'player')
-  player.x++
+  let player = objects.find(object => object.type == 'player')
+  let toCollide = metaList[player.y][player.x + 1]
+  console.log(toCollide)
+  if (toCollide != '') {
+    if (toCollide == "boulder") {
+      let boulder = objects.find(object => object.x == player.x + 1 && object.y == player.y)
+      if (metaList[boulder.y][boulder.x + 1] == '') {
+        boulder.x++
+        player.x++
+      } else if (metaList[boulder.y][boulder.x + 1] == "hole"){
+        boulder.x++
+        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        player.x++
+      }
+    } else {
+      //pass
+    }
+  } else {
+    player.x++
+  }
 }
+function moveRight() {
+  let player = objects.find(object => object.type == 'player')
+  let toCollide = metaList[player.y][player.x - 1]
+  if (toCollide != '') {
+    if (toCollide == "boulder") {
+      let boulder = objects.find(object => object.x == player.x - 1 && object.y == player.y)
+      if (metaList[boulder.y][boulder.x - 1] == '') {
+        boulder.x--
+        player.x--
+      } else if (metaList[boulder.y][boulder.x - 1] == "hole"){
+        boulder.x--
+        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        player.x--
+      }
+    } else {
+      //pass
+    }
+  } else {
+    player.x--
+  }
+}
+function moveUp() {
+  let player = objects.find(object => object.type == 'player')
+  let toCollide = metaList[player.y - 1][player.x]
+  if (toCollide != '') {
+    if (toCollide == "boulder") {
+      let boulder = objects.find(object => object.x == player.x && object.y == player.y - 1)
+      if (metaList[boulder.y - 1][boulder.x] == '') {
+        boulder.y--
+        player.y--
+      } else if (metaList[boulder.y - 1][boulder.x] == "hole"){
+        boulder.y--
+        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        player.y--
+      }
+    } else {
+      //pass
+    }
+  } else {
+    player.y--
+  }
+}
+function moveDown() {
+  let player = objects.find(object => object.type == 'player')
+  let toCollide = metaList[player.y + 1][player.x]
+  if (toCollide != '') {
+    if (toCollide == "boulder") {
+      let boulder = objects.find(object => object.x == player.x && object.y == player.y + 1)
+      if (metaList[boulder.y + 1][boulder.x] == '') {
+        boulder.y++
+        player.y++
+      } else if (metaList[boulder.y + 1][boulder.x] == "hole"){
+        boulder.y++
+        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
+        objects.splice(holeIndex,1)
+        player.y++
+      }
+    } else {
+      //pass
+    }
+  } else {
+    player.y++
+  }
+}
+
+
 
 document.addEventListener("keypress", function(press6){
   if (press6.key == "6"){
     moveLeft()
+    sync()
+    render()
+  }
+})
+document.addEventListener("keypress", function(press4){
+  if (press4.key == "4"){
+    moveRight()
+    sync()
+    render()
+  }
+})
+document.addEventListener("keypress", function(press8){
+  if (press8.key == "8"){
+    moveUp()
+    sync()
+    render()
+  }
+})
+document.addEventListener("keypress", function(press2){
+  if (press2.key == "2"){
+    moveDown()
     sync()
     render()
   }
@@ -169,8 +290,6 @@ document.addEventListener("keypress", function(press6){
 // SETUP
 sync()
 render()
-//console.log(metaList[2][1])
-//console.log(metaList)
 
 let loop = () => {
   update()
