@@ -3,15 +3,17 @@ let metaList = []
 let displayList = []
 
 let everything = { //static list that defines each object that can ever exist
-  '': {
+  empty: {
     char: ".",
     foreground: "white",
-    background: "black"
+    background: "black",
+    solid: false
   },
   player: {
     char: "@",
     foreground: "white",
     background: "black",
+    solid: true,
     update(){
       this.x += 1;
     }
@@ -19,22 +21,32 @@ let everything = { //static list that defines each object that can ever exist
   vWall: {
     char: "|",
     foreground: "white",
-    background: "black"
+    background: "black",
+    solid: true
   },
   hWall: {
     char: "—",
     foreground: "white",
     background: "black",
+    solid: true
   },
   boulder: {
     char: "0",
     foreground: "white",
     background: "black",
+    solid: true
   },
   hole: {
     char: "^",
     foreground: "sienna",
-    background: "black"
+    background: "black",
+    solid: true
+  },
+  upStair: {
+    char: "<",
+    foreground: "white",
+    background: "black",
+    solicd: false
   },
 
 
@@ -99,6 +111,11 @@ let objects = [ //live list of everything currently existing
     x:7,
     y:8
   },
+  {
+    type: 'upStair',
+    x:3,
+    y:6
+  }
 ]
 
 let width = 10
@@ -111,6 +128,15 @@ function sync(){ //syncs object list and metalist
   for (let object of objects){
     metaList[object.y][object.x] = object.type
   }
+}
+
+function setupWithCode(code){
+  objects = []
+  let parser = ""
+  for (let i = 0; i < code.length; i++){
+    
+  }
+  
 }
 
 //processing functions
@@ -138,7 +164,7 @@ function setup() {
   for (let y = 0; y < height; y++) {
     let row = []//initaliation row by row
     for (let x = 0; x < width; x++){
-      row.push('')
+      row.push("empty")
     }  
     metaList.push(row)
   }
@@ -157,104 +183,37 @@ function update() {
 
 //gameplay functions
 
-function moveLeft() {
+function move(dx ,dy) {
   let player = objects.find(object => object.type == 'player')
-  let toCollide = metaList[player.y][player.x + 1]
-  console.log(toCollide)
-  if (toCollide != '') {
+  let collideKey = metaList[player.y + dy][player.x + dx]
+  let toCollide = everything[collideKey]
+  console.log(collideKey, toCollide)
+  if (toCollide.solid) {
     if (toCollide == "boulder") {
-      let boulder = objects.find(object => object.x == player.x + 1 && object.y == player.y)
-      if (metaList[boulder.y][boulder.x + 1] == '') {
-        boulder.x++
-        player.x++
-      } else if (metaList[boulder.y][boulder.x + 1] == "hole"){
-        boulder.x++
+      let boulder = objects.find(object => object.x == player.x + dx && object.y == player.y + dy)
+      if (metaList[boulder.y][boulder.x + 1] == "empty") {
+        boulder.x += dx
+        boulder.y += dy
+        player.x += dx
+        player.y += dy
+      } else if (metaList[boulder.y + dy][boulder.x + dx] == "hole"){
+        boulder.x += dx
+        boulder.y += dy
         let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
         objects.splice(holeIndex,1)
         holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
         objects.splice(holeIndex,1)
-        player.x++
+        player.x += dx
+        player.y += dy
       }
     } else {
       //pass
     }
   } else {
-    player.x++
+    player.x += dx
+    player.y += dy
   }
 }
-function moveRight() {
-  let player = objects.find(object => object.type == 'player')
-  let toCollide = metaList[player.y][player.x - 1]
-  if (toCollide != '') {
-    if (toCollide == "boulder") {
-      let boulder = objects.find(object => object.x == player.x - 1 && object.y == player.y)
-      if (metaList[boulder.y][boulder.x - 1] == '') {
-        boulder.x--
-        player.x--
-      } else if (metaList[boulder.y][boulder.x - 1] == "hole"){
-        boulder.x--
-        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        player.x--
-      }
-    } else {
-      //pass
-    }
-  } else {
-    player.x--
-  }
-}
-function moveUp() {
-  let player = objects.find(object => object.type == 'player')
-  let toCollide = metaList[player.y - 1][player.x]
-  if (toCollide != '') {
-    if (toCollide == "boulder") {
-      let boulder = objects.find(object => object.x == player.x && object.y == player.y - 1)
-      if (metaList[boulder.y - 1][boulder.x] == '') {
-        boulder.y--
-        player.y--
-      } else if (metaList[boulder.y - 1][boulder.x] == "hole"){
-        boulder.y--
-        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        player.y--
-      }
-    } else {
-      //pass
-    }
-  } else {
-    player.y--
-  }
-}
-function moveDown() {
-  let player = objects.find(object => object.type == 'player')
-  let toCollide = metaList[player.y + 1][player.x]
-  if (toCollide != '') {
-    if (toCollide == "boulder") {
-      let boulder = objects.find(object => object.x == player.x && object.y == player.y + 1)
-      if (metaList[boulder.y + 1][boulder.x] == '') {
-        boulder.y++
-        player.y++
-      } else if (metaList[boulder.y + 1][boulder.x] == "hole"){
-        boulder.y++
-        let holeIndex = objects.findIndex(object => object.type == 'hole' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
-        objects.splice(holeIndex,1)
-        player.y++
-      }
-    } else {
-      //pass
-    }
-  } else {
-    player.y++
-  }
-}
-
 
 
 document.addEventListener("keypress", function(press6){
