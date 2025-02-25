@@ -1,5 +1,4 @@
-//things to do: BOULDER COLLISION, ESPECIALLY WITH STAIRS AND WALLS
-// ALSO: RENDERING ORDER MATTERS WHEN OBJECTS OVERLAP
+//things to do: RENDERING ORDER MATTERS WHEN OBJECTS OVERLAP
 let metaList = []
 let displayList = []
 
@@ -131,12 +130,20 @@ function sync(){ //syncs object list and metalist
   }
 }
 
-function setupWithCode(code){
+function setupWithSeed(seed){
   objects = []
   let parser = ""
-  for (let i = 0; i < code.length; i++){
-    
+  //set up dimensions
+  parser = ""
+  for (let i=0; seed[i]!='x'; i++){
+    parser += seed[i]
   }
+  width = Number(parser)
+  parser = ""
+  for (let i=0; seed[i]!=';'; i++) {
+    parser += seed[i]
+  }
+  height = Number(parser)
   
 }
 
