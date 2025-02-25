@@ -1,4 +1,5 @@
-//things to do: keypress detection
+//things to do: BOULDER COLLISION, ESPECIALLY WITH STAIRS AND WALLS
+// ALSO: RENDERING ORDER MATTERS WHEN OBJECTS OVERLAP
 let metaList = []
 let displayList = []
 
@@ -72,19 +73,9 @@ let everything = { //static list that defines each object that can ever exist
 
 let objects = [ //live list of everything currently existing
   {
-    type: 'player',
-    x:1,
-    y:2,
-  },
-  {
     type: 'vWall',
     x:4,
     y:2
-  },
-  {
-    type: 'boulder',
-    x:3,
-    y:4
   },
   {
     type: 'hole',
@@ -218,28 +209,28 @@ function move(dx ,dy) {
 
 document.addEventListener("keypress", function(press6){
   if (press6.key == "6"){
-    moveLeft()
+    move(1,0)
     sync()
     render()
   }
 })
 document.addEventListener("keypress", function(press4){
   if (press4.key == "4"){
-    moveRight()
+    move(-1,0)
     sync()
     render()
   }
 })
 document.addEventListener("keypress", function(press8){
   if (press8.key == "8"){
-    moveUp()
+    move(0,-1)
     sync()
     render()
   }
 })
 document.addEventListener("keypress", function(press2){
   if (press2.key == "2"){
-    moveDown()
+    move(0,1)
     sync()
     render()
   }
