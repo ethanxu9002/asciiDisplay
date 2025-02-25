@@ -41,7 +41,7 @@ let everything = { //static list that defines each object that can ever exist
     char: "^",
     foreground: "sienna",
     background: "black",
-    solid: true
+    solid: false
   },
   upStair: {
     char: "<",
@@ -106,6 +106,16 @@ let objects = [ //live list of everything currently existing
     type: 'upStair',
     x:3,
     y:6
+  },
+  {
+    type: 'boulder',
+    x:3,
+    y:4
+  },
+  {
+    type: 'player',
+    x:1,
+    y:1
   }
 ]
 
@@ -180,13 +190,11 @@ function move(dx ,dy) {
   let toCollide = everything[collideKey]
   console.log(collideKey, toCollide)
   if (toCollide.solid) {
-    if (toCollide == "boulder") {
-      let boulder = objects.find(object => object.x == player.x + dx && object.y == player.y + dy)
-      if (metaList[boulder.y][boulder.x + 1] == "empty") {
-        boulder.x += dx
-        boulder.y += dy
-        player.x += dx
-        player.y += dy
+    if (collideKey == "boulder") {
+      let boulder = objects.find(object => object.x == player.x + dx && object.y == player.y + dy && object.type == 'boulder')
+      console.log('eval boulder ocllide')
+      if (everything[metaList[boulder.y + dy][boulder.x + dx]].solid) {
+        //pass
       } else if (metaList[boulder.y + dy][boulder.x + dx] == "hole"){
         boulder.x += dx
         boulder.y += dy
@@ -194,6 +202,11 @@ function move(dx ,dy) {
         objects.splice(holeIndex,1)
         holeIndex = objects.findIndex(object => object.type == 'boulder' && object.x == boulder.x && object.y == boulder.y)
         objects.splice(holeIndex,1)
+        player.x += dx
+        player.y += dy
+      } else {
+        boulder.x += dx
+        boulder.y += dy
         player.x += dx
         player.y += dy
       }
