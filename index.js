@@ -132,19 +132,7 @@ function sync(){ //syncs object list and metalist
 
 function setupWithSeed(seed){
   objects = []
-  let parser = ""
-  //set up dimensions
-  parser = ""
-  for (let i=0; seed[i]!='x'; i++){
-    parser += seed[i]
-  }
-  width = Number(parser)
-  parser = ""
-  for (let i=0; seed[i]!=';'; i++) {
-    parser += seed[i]
-  }
-  height = Number(parser)
-  
+
 }
 
 //processing functions
