@@ -130,10 +130,12 @@ function sync(){ //syncs object list and metalist
   }
 }
 
+// PLEASE FIX THIS
+
 function setupWithSeed(seed){
-  objects = []
 
 }
+
 
 //processing functions
 function render() {
