@@ -133,8 +133,46 @@ function sync(){ //syncs object list and metalist
 // PLEASE FIX THIS
 
 function setupWithSeed(seed){
+  
+  let key = {  
+    e:'empty',
+    v:'vWall',
+    h:'hWall',
+    H:'hole',
+    b:'boulder',
+    u:'upStair',
+    P:'player'
+  }
 
+  objects = []
+  let row = []
+  let x = 0
+  let y = 0
+
+  for(char in seed){
+
+    //console.log(key[seed[char]])
+    if(seed[char] != 'n'){
+      row.push({
+        type:key[seed[char]],
+        x:x,
+        y:y
+      })
+      //console.log(key.seed[char])
+      x+=1
+    } else {
+      console.log("new")
+      console.log(row)
+      //objects.push(row) <------ THIS IS CAUSING ISSUES FOR SOME REASON
+      //row = []
+      //x=0
+      //y+=1
+    }
+  }
+  console.log(row)
 }
+
+setupWithSeed("vvvvvvvnvvvvv")
 
 
 //processing functions
