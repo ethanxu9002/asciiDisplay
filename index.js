@@ -1,4 +1,13 @@
 //things to do: RENDERING ORDER MATTERS WHEN OBJECTS OVERLAP
+
+/*
+
+setup() and setupWithCode() conflicts with metaList
+
+*/
+
+
+
 let metaList = []
 let displayList = []
 
@@ -126,14 +135,18 @@ let display = document.getElementById("display-El")
 function sync(){ //syncs object list and metalist
   setup()
   for (let object of objects){
+    console.log("sync", metaList)
     metaList[object.y][object.x] = object.type
   }
 }
 
 // PLEASE FIX THIS
 
-function setupWithSeed(seed){
+function setupWithSeed(seed, sWidth, sHeight){
   
+  width = sWidth
+  height = sHeight
+
   let key = {  
     e:'empty',
     v:'vWall',
@@ -149,6 +162,9 @@ function setupWithSeed(seed){
   let x = 0
   let y = 0
 
+  let metaRow = []
+  metaList = []
+
   for(char in seed){
 
     //console.log(key[seed[char]])
@@ -158,12 +174,18 @@ function setupWithSeed(seed){
         x:x,
         y:y
       })
+      metaRow.push()
       //console.log(key.seed[char])
       x+=1
     } else {
       console.log("new")
       console.log(row)
-      //objects.push(row) <------ THIS IS CAUSING ISSUES FOR SOME REASON
+
+      metaList.push(metaRow)
+      metaRow = []
+      console.log("row", metaRow)
+      
+      objects.push(row) //<------ THIS IS CAUSING ISSUES FOR SOME REASON
       //row = []
       //x=0
       //y+=1
@@ -286,6 +308,8 @@ document.addEventListener("keypress", function(press2){
 
 
 // SETUP
+console.log("initialize")
+console.log(objects)
 sync()
 render()
 
