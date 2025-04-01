@@ -12,6 +12,12 @@ let metaList = []
 let displayList = []
 
 let everything = { //static list that defines each object that can ever exist
+  blankWall:{
+    char: ".",
+    foreground: "black",
+    background: "black",
+    solid: true
+  },
   empty: {
     char: ".",
     foreground: "white",
@@ -55,7 +61,7 @@ let everything = { //static list that defines each object that can ever exist
     char: "<",
     foreground: "white",
     background: "black",
-    solicd: false
+    solid: false
   },
 
 
@@ -80,6 +86,7 @@ let everything = { //static list that defines each object that can ever exist
 }
 
 let objects = [ //live list of everything currently existing
+
   {
     type: 'vWall',
     x:4,
@@ -125,6 +132,7 @@ let objects = [ //live list of everything currently existing
     x:1,
     y:1
   }
+
 ]
 
 let width = 10
@@ -135,17 +143,17 @@ let display = document.getElementById("display-El")
 function sync(){ //syncs object list and metalist
   setup()
   for (let object of objects){
-    console.log("sync", metaList)
+    //console.log(object)
+    //console.log("sync", metaList[object.y][object.x])
     metaList[object.y][object.x] = object.type
+    //console.log(metaList)
   }
+  
 }
 
-// PLEASE FIX THIS
-
-function setupWithSeed(seed, sWidth, sHeight){
-  
-  width = sWidth
-  height = sHeight
+function setupWithSeed(seed, px, py){
+  width = seed[0].length
+  height = seed.length
 
   let key = {  
     e:'empty',
@@ -154,48 +162,47 @@ function setupWithSeed(seed, sWidth, sHeight){
     H:'hole',
     b:'boulder',
     u:'upStair',
-    P:'player'
+    w:'blankWall'
+    //P:'player'
   }
 
   objects = []
-  let row = []
-  let x = 0
-  let y = 0
 
-  let metaRow = []
-  metaList = []
-
-  for(char in seed){
-
-    //console.log(key[seed[char]])
-    if(seed[char] != 'n'){
-      row.push({
-        type:key[seed[char]],
-        x:x,
-        y:y
+  for(row in seed){
+    for(char in seed[row]){
+      objects.push({
+        type:key[seed[row][char]],
+        x:Number(char),
+        y:Number(row)
       })
-      metaRow.push()
-      //console.log(key.seed[char])
-      x+=1
-    } else {
-      console.log("new")
-      console.log(row)
-
-      metaList.push(metaRow)
-      metaRow = []
-      console.log("row", metaRow)
-      
-      objects.push(row) //<------ THIS IS CAUSING ISSUES FOR SOME REASON
-      //row = []
-      //x=0
-      //y+=1
     }
   }
-  console.log(row)
+  
+  objects.push({
+    type:'player',
+    x:px,
+    y:py
+  })
+  //purges 'empty' objects
+  objects = objects.filter(object => object.type != 'empty')
+  
+
 }
 
-setupWithSeed("vvvvvvvnvvvvv")
-
+setupWithSeed(
+  ['hhhhhhhhwhhhhhh',
+    'vuveeeehhheeeev',
+    'vHvhebbeeeebeev',
+    'vHvveebbvebebev',
+    'vHvveeeeveeeeev',
+    'vHvhhhhhhbhhhhv',
+    'vHvwwwwveeeeeev',
+    'vHvhhhhheeeeeev',
+    'veeHHHHbbbbeeev',
+    'veehhhhheeeeeev',
+    'hhhhwwwhhhhhhhh'
+  ],
+     3, 1)
 
 //processing functions
 function render() {
@@ -217,6 +224,7 @@ function render() {
   display.innerHTML = ""
   display.appendChild(tableEl)
 }
+
 function setup() {
   metaList = []
   for (let y = 0; y < height; y++) {
@@ -246,10 +254,10 @@ function move(dx ,dy) {
   let collideKey = metaList[player.y + dy][player.x + dx]
   let toCollide = everything[collideKey]
   console.log(collideKey, toCollide)
-  if (toCollide.solid) {
+  if (toCollide.solid || (collideKey == 'hole')) {
     if (collideKey == "boulder") {
       let boulder = objects.find(object => object.x == player.x + dx && object.y == player.y + dy && object.type == 'boulder')
-      console.log('eval boulder ocllide')
+      //console.log('eval boulder collide')
       if (everything[metaList[boulder.y + dy][boulder.x + dx]].solid) {
         //pass
       } else if (metaList[boulder.y + dy][boulder.x + dx] == "hole"){
@@ -308,8 +316,7 @@ document.addEventListener("keypress", function(press2){
 
 
 // SETUP
-console.log("initialize")
-console.log(objects)
+console.log("initialize", objects)
 sync()
 render()
 
